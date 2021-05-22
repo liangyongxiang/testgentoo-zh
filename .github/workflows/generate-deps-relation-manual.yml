@@ -1,5 +1,5 @@
 name: Generate the relation of gentoo-zh packages
-on: workflow-dispatch
+on: workflow_dispatch
 
 jobs:
   generate:
