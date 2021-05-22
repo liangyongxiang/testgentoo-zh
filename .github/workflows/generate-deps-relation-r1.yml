@@ -1,0 +1,38 @@
+name: Generate the relation of gentoo-zh packages
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v2
+        with:
+          ref: generate-deps-relation
+      - name: Fetch gentoo-zh repo
+        uses: actions/checkout@v2
+        with:
+          ref: master
+          path: gentoo-zh
+      - name: Update packages relation
+        id: update_relation
+        shell: bash
+        run: ./update-relation.sh
+      - name: Push changes
+        if: ${{ steps.update_relation.outputs.state == 'changed' }}
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: generate-deps-relation
+            #- name: Post to pastebin
+            #if: ${{ steps.update_relation.outputs.state == 'changed' }}
+            #shell: bash
+            #env:
+            #myuuid: ${{ secrets.UUID }}
+            #run: curl -X PUT -F "c=@-" "http://fars.ee/$myuuid" <relation.md
+
